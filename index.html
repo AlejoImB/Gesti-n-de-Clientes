@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestión de Clientes - Innovasoft</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <link rel="icon" href="/imagenes/icono.ico">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px;
+      background: linear-gradient(135deg, #0a2540 0%, #1e4976 100%);
+      color: #ffffff;
+      line-height: 1.5;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 32px;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+    }
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: #ffffff;
+      text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+    }
+    .external-link {
+      background: linear-gradient(45deg, #00c4b4, #00e676);
+      padding: 10px 20px;
+      border-radius: 8px;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    .external-link:hover {
+      background: linear-gradient(45deg, #00a69c, #00c4b4);
+      transform: translateY(-1px);
+    }
+    form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    input, select, textarea, button {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      transition: all 0.3s ease;
+    }
+    input.invalid, select.invalid, textarea.invalid {
+      border: 1px solid #ef4444;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+      max-height: 200px;
+    }
+    input::placeholder, select::placeholder, textarea::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    button {
+      background: linear-gradient(45deg, #3b82f6, #60a5fa);
+      cursor: pointer;
+      font-weight: 500;
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+    }
+    button:hover {
+      background: linear-gradient(45deg, #2563eb, #3b82f6);
+      transform: translateY(-1px);
+    }
+    .acciones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+      align-items: center;
+    }
+    .search-container {
+      flex-grow: 1;
+      max-width: 280px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    th {
+      background: rgba(255, 255, 255, 0.15);
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    th:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+    tr {
+      opacity: 0;
+      animation: slideIn 0.3s ease forwards;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .estado-circle {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 8px;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
+    }
+    .estado-Pendiente-Gestión { background-color: #f59e0b; }
+    .estado-Solicitud-de-Desarrollo { background-color: #06b6d4; }
+    .estado-Inactivo { background-color: #6b7280; }
+    .estado-Sin-Novedad { background-color: #22c55e; }
+    .estado-Implementación { background-color: #7c3aed; }
+    .estado-Crítico { background-color: #ef4444; }
+    .estado-Estable { background-color: #10b981; }
+    .estado-Regular { background-color: #facc15; }
+    .action-buttons button {
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      margin-right: 8px;
+    }
+    .gestion-text {
+      cursor: pointer;
+      transition: color 0.3s ease;
+      white-space: normal;
+      word-wrap: break-word;
+      font-size: 0.9rem;
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+    }
+    .gestion-text:hover {
+      color: #60a5fa;
+    }
+    .gestion-input {
+      width: 100%;
+      box-sizing: border-box;
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      font-size: 0.9rem;
+      min-height: 80px;
+      resize: vertical;
+    }
+    select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23ffffff' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      cursor: pointer;
+    }
+    select:focus {
+      outline: none;
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+    }
+    select option {
+      background: #0a2540;
+      color: #ffffff;
+      padding: 8px;
+    }
+    .notification {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      color: #ffffff;
+      display: none;
+      z-index: 1000;
+      font-size: 0.95rem;
+      font-weight: 500;
+      animation: fadeIn 0.5s ease-in;
+    }
+    .notification.success {
+      background: linear-gradient(45deg, #22c55e, #34d399);
+    }
+    .notification.error {
+      background: linear-gradient(45deg, #ef4444, #f87171);
+    }
+    .notification .close-btn {
+      margin-left: 10px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: #ffffff;
+      font-size: 1rem;
+    }
+    #notification-history {
+      max-height: 180px;
+      overflow-y: auto;
+      margin-top: 16px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 12px;
+      border-radius: 8px;
+    }
+    #notification-history h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    #clientesChart {
+      max-height: 300px;
+      margin-bottom: 24px;
+    }
+    .pagination {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+    .pagination button {
+      padding: 8px 16px;
+      font-size: 0.9rem;
+    }
+    /* Modal styles for management history */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.3s ease;
+    }
+    .modal-content {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 24px;
+      border-radius: 16px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      color: #ffffff;
+    }
+    .modal-content h2 {
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+    .modal-content ul {
+      list-style: none;
+      padding: 0;
+    }
+    .modal-content li {
+      padding: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .modal-content li:last-child {
+      border-bottom: none;
+    }
+    .modal-content .timestamp {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+    .close-modal {
+      background: linear-gradient(45deg, #ef4444, #f87171);
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 16px;
+      float: right;
+    }
+    .close-modal:hover {
+      background: linear-gradient(45deg, #dc2626, #ef4444);
+      transform: translateY(-1px);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 768px) {
+      body {
+        padding: 16px;
+      }
+      .container {
+        padding: 20px;
+      }
+      form {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .acciones {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+      }
+      .search-container {
+        max-width: 100%;
+      }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+      .logo {
+        width: 56px;
+        height: 56px;
+      }
+     
+      .modal-content {
+        width: 95%;
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <img src="/imagenes/Alejandro.jpeg" alt="Logo de Innovasoft, una empresa de tecnología" class="logo" />
+      <h1>Gestión de Clientes - Alejandro Escalante</h1>
+      <a href="https://innovasoftcol-my.sharepoint.com/:x:/p/alejandro_imbachi/EVryrIfA9zRFibyJZaavGVUBJarUR6a8XjdVHAs2DNLO0g?e=EvR3Zj&wdOrigin=TEAMS-WEB.p2p_ns.rwc&wdExp=TEAMS-TREATMENT&wdhostclicktime=1753579009506&web=1" target="_blank" class="external-link" aria-label="Ver listado de clientes en SharePoint">Ver Listado de Clientes</a>
+    </header>
+
+    <div id="notification" class="notification"></div>
+
+    <form id="formulario">
+      <input type="text" id="nombre" placeholder="Nombre del cliente" required aria-label="Nombre del cliente" />
+      <select id="estado" required aria-label="Estado del cliente">
+        <option value="" disabled selected>Selecciona el estado</option>
+        <option value="Pendiente Gestión">Pendiente Gestión</option>
+        <option value="Solicitud de Desarrollo">Solicitud de Desarrollo</option>
+        <option value="Inactivo">Inactivo</option>
+        <option value="Sin Novedad">Sin Novedad</option>
+        <option value="Implementación">Implementación</option>
+        <option value="Crítico">Crítico</option>
+        <option value="Estable">Estable</option>
+        <option value="Regular">Regular</option>
+      </select>
+      <select id="satisfaccion" required aria-label="Nivel de satisfacción">
+        <option value="" disabled selected>Nivel de satisfacción</option>
+        <option value="Muy Satisfecho">Muy Satisfecho</option>
+        <option value="Satisfecho">Satisfecho</option>
+        <option value="Neutral">Neutral</option>
+        <option value="Insatisfecho">Insatisfecho</option>
+        <option value="Muy Insatisfecho">Muy Insatisfecho</option>
+      </select>
+      <textarea id="gestion" placeholder="Última gestión (detalles y observaciones)" required aria-label="Detalles de la última gestión"></textarea>
+      <button type="submit" aria-label="Agregar o actualizar cliente">Agregar</button>
+    </form>
+
+    <div style="margin-bottom: 24px;">
+      <canvas id="clientesChart"></canvas>
+    </div>
+
+    <div class="acciones">
+      <button id="descargar-pdf" aria-label="Descargar reporte en PDF"><i class="fas fa-file-pdf"></i> Descargar PDF</button>
+      <button id="descargar-csv" aria-label="Descargar reporte en CSV"><i class="fas fa-file-csv"></i> Descargar CSV</button>
+      <button id="descargar-json" aria-label="Descargar reporte en JSON"><i class="fas fa-file-code"></i> Descargar JSON</button>
+      <button id="descargar-excel" aria-label="Descargar reporte en Excel"><i class="fas fa-file-excel"></i> Descargar Excel</button>
+      <button id="importar-json-btn" aria-label="Importar datos desde JSON"><i class="fas fa-file-import"></i> Importar JSON</button>
+      <input type="file" id="importar-json" accept=".json" style="display: none;" aria-label="Seleccionar archivo JSON" />
+      <button id="borrar-todo" aria-label="Borrar todos los clientes"><i class="fas fa-trash-alt"></i> Borrar Todos</button>
+      <div class="search-container">
+        <input type="text" id="buscar-cliente" placeholder="Buscar cliente..." aria-label="Buscar cliente por nombre o gestión" />
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th data-sort="index" aria-sort="none">#</th>
+          <th data-sort="nombre" aria-sort="none">Nombre</th>
+          <th data-sort="estado" aria-sort="none">Estado</th>
+          <th data-sort="satisfaccion" aria-sort="none">Satisfacción</th>
+          <th data-sort="gestion" aria-sort="none">Gestión</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-clientes"></tbody>
+    </table>
+
+    <div class="pagination" id="pagination"></div>
+
+    <div id="notification-history">
+      <h3>Historial de Notificaciones</h3>
+      <div id="notification-list"></div>
+    </div>
+
+    <!-- Modal for management history -->
+    <div id="gestion-history-modal" class="modal">
+      <div class="modal-content">
+        <h2 id="modal-client-name">Historial de Gestión</h2>
+        <ul id="gestion-history-list"></ul>
+        <button class="close-modal" aria-label="Cerrar historial">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.1/dist/purify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+    const { jsPDF } = window.jspdf;
+    const form = document.getElementById('formulario');
+    const tablaClientes = document.getElementById('tabla-clientes');
+    const descargarPDF = document.getElementById('descargar-pdf');
+    const descargarCSV = document.getElementById('descargar-csv');
+    const descargarJSON = document.getElementById('descargar-json');
+    const descargarExcel = document.getElementById('descargar-excel');
+    const importarJSON = document.getElementById('importar-json-btn');
+    const borrarTodo = document.getElementById('borrar-todo');
+    const buscarCliente = document.getElementById('buscar-cliente');
+    const notification = document.getElementById('notification');
+    const gestionHistoryModal = document.getElementById('gestion-history-modal');
+    const gestionHistoryList = document.getElementById('gestion-history-list');
+    const modalClientName = document.getElementById('modal-client-name');
+    let clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+    let notificationHistory = [];
+    let editIndex = -1;
+    let sortColumn = null;
+    let sortDirection = 1;
+    const rowsPerPage = 10;
+    let currentPage = 1;
+
+    // Initialize gestionHistory for existing clients
+    clientes = clientes.map(cliente => ({
+      ...cliente,
+      gestionHistory: cliente.gestionHistory || (cliente.gestion ? [{ gestion: cliente.gestion, timestamp: cliente.timestamp || new Date().toISOString() }] : [])
+    }));
+    localStorage.setItem('clientes', JSON.stringify(clientes));
+
+    function sanitizeInput(input) {
+      return DOMPurify.sanitize(input);
+    }
+
+    function showNotification(message, type) {
+      notification.innerHTML = `${message} <button class="close-btn" aria-label="Cerrar notificación">✕</button>`;
+      notification.className = `notification ${type}`;
+      notification.style.display = 'block';
+      notificationHistory.push({ message, type, timestamp: new Date().toLocaleString('es-ES') });
+      if (notificationHistory.length > 5) notificationHistory.shift();
+      document.getElementById('notification-list').innerHTML = notificationHistory.map(n => `<p>[${n.timestamp}] ${n.message}</p>`).join('');
+      notification.querySelector('.close-btn').addEventListener('click', () => {
+        notification.style.display = 'none';
+      });
+    }
+
+    function formatGestion(gestion, timestamp) {
+      return `[${new Date(timestamp).toLocaleString('es-ES')}] ${gestion}`;
+    }
+
+    function truncateText(text, maxLength = 100) {
+      if (text.length <= maxLength) return text;
+      return text.substring(0, maxLength) + '...';
+    }
+
+    function validateInputs() {
+      const inputs = document.querySelectorAll('#formulario input, #formulario select, #formulario textarea');
+      inputs.forEach(input => {
+        if (!input.value.trim()) {
+          input.classList.add('invalid');
+        } else {
+          input.classList.remove('invalid');
+        }
+      });
+    }
+
+    function updateChart() {
+      const ctx = document.getElementById('clientesChart').getContext('2d');
+      if (window.clientesChart) window.clientesChart.destroy();
+      window.clientesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Pendiente Gestión', 'Solicitud de Desarrollo', 'Inactivo', 'Sin Novedad', 'Implementación', 'Crítico', 'Estable', 'Regular'],
+          datasets: [{
+            label: 'Clientes por Estado',
+            data: [
+              clientes.filter(c => c.estado === 'Pendiente Gestión').length,
+              clientes.filter(c => c.estado === 'Solicitud de Desarrollo').length,
+              clientes.filter(c => c.estado === 'Inactivo').length,
+              clientes.filter(c => c.estado === 'Sin Novedad').length,
+              clientes.filter(c => c.estado === 'Implementación').length,
+              clientes.filter(c => c.estado === 'Crítico').length,
+              clientes.filter(c => c.estado === 'Estable').length,
+              clientes.filter(c => c.estado === 'Regular').length
+            ],
+            backgroundColor: ['#f59e0b', '#06b6d4', '#6b7280', '#22c55e', '#7c3aed', '#ef4444', '#10b981', '#facc15'],
+            borderColor: '#ffffff',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: { beginAtZero: true, ticks: { color: '#ffffff', font: { size: 12 } }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+            x: { ticks: { color: '#ffffff', font: { size: 12 } }, grid: { color: 'rgba(255, 255, 255, 0.1)' } }
+          },
+          plugins: { legend: { labels: { color: '#ffffff', font: { size: 12 } } } }
+        }
+      });
+    }
+
+    function showGestionHistory(index) {
+      const cliente = clientes[index];
+      modalClientName.textContent = `Historial de Gestión - ${sanitizeInput(cliente.nombre)}`;
+      gestionHistoryList.innerHTML = cliente.gestionHistory.length > 0
+        ? cliente.gestionHistory.map(entry => `
+            <li>
+              <div class="timestamp">${new Date(entry.timestamp).toLocaleString('es-ES')}</div>
+              <div>${sanitizeInput(entry.gestion)}</div>
+            </li>
+          `).join('')
+        : '<li>No hay historial de gestión disponible.</li>';
+      gestionHistoryModal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      gestionHistoryModal.style.display = 'none';
+    }
+
+    function renderTable(data = clientes, page = 1) {
+      currentPage = page;
+      const start = (page - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+      const paginatedData = data.slice(start, end);
+      tablaClientes.innerHTML = '';
+      paginatedData.forEach((cliente, index) => {
+        const latestGestion = cliente.gestionHistory.length > 0 ? cliente.gestionHistory[cliente.gestionHistory.length - 1].gestion : 'Sin gestión';
+        const truncatedGestion = truncateText(latestGestion);
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${start + index + 1}</td>
+          <td>${sanitizeInput(cliente.nombre)}</td>
+          <td><span class="estado-circle estado-${cliente.estado.replace(' ', '-')}" title="${cliente.estado}" aria-label="Estado ${cliente.estado}"></span>${sanitizeInput(cliente.estado)}</td>
+          <td>${sanitizeInput(cliente.satisfaccion)}</td>
+          <td>
+            <span class="gestion-text" data-index="${start + index}" aria-label="Última gestión">${sanitizeInput(truncatedGestion)}</span>
+            <textarea class="gestion-input" data-index="${start + index}" style="display:none;" aria-label="Editar última gestión">${latestGestion.startsWith('[') ? latestGestion.split('] ').slice(1).join('] ') : latestGestion}</textarea>
+          </td>
+          <td class="action-buttons">
+            <button onclick="editarCliente(${start + index})" aria-label="Editar cliente ${cliente.nombre}"><i class="fas fa-edit"></i> Editar</button>
+            <button onclick="eliminarCliente(${start + index})" aria-label="Eliminar cliente ${cliente.nombre}"><i class="fas fa-trash"></i> Eliminar</button>
+            <button onclick="showGestionHistory(${start + index})" aria-label="Ver historial de gestión de ${cliente.nombre}"><i class="fas fa-history"></i> Historial</button>
+          </td>
+        `;
+        tablaClientes.appendChild(row);
+      });
+
+      document.querySelectorAll('.gestion-text').forEach(span => {
+        span.addEventListener('click', () => {
+          const index = span.dataset.index;
+          span.style.display = 'none';
+          const input = span.parentElement.querySelector('.gestion-input');
+          input.style.display = 'block';
+          input.focus();
+        });
+      });
+
+      document.querySelectorAll('.gestion-input').forEach(input => {
+        input.addEventListener('blur', () => {
+          const index = input.dataset.index;
+          const span = input.parentElement.querySelector('.gestion-text');
+          const newGestion = sanitizeInput(input.value.trim());
+          if (newGestion) {
+            clientes[index].gestionHistory.push({
+              gestion: newGestion,
+              timestamp: new Date().toISOString()
+            });
+            localStorage.setItem('clientes', JSON.stringify(clientes));
+            renderTable(data, page);
+            showNotification('Gestión actualizada correctamente', 'success');
+          }
+          input.style.display = 'none';
+          span.style.display = 'block';
+        });
+
+        input.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            input.blur();
+          }
+        });
+      });
+
+      const totalPages = Math.ceil(data.length / rowsPerPage);
+      const pagination = document.getElementById('pagination');
+      pagination.innerHTML = `
+        <button onclick="renderTable(clientes, ${page - 1})" ${page === 1 ? 'disabled' : ''} aria-label="Página anterior">Anterior</button>
+        <span>Página ${page} de ${totalPages}</span>
+        <button onclick="renderTable(clientes, ${page + 1})" ${page === totalPages ? 'disabled' : ''} aria-label="Página siguiente">Siguiente</button>
+      `;
+      updateChart();
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      const nombre = sanitizeInput(document.getElementById('nombre').value.trim());
+      const estado = sanitizeInput(document.getElementById('estado').value);
+      const satisfaccion = sanitizeInput(document.getElementById('satisfaccion').value);
+      const gestion = sanitizeInput(document.getElementById('gestion').value.trim());
+
+      if (!nombre || !estado || !satisfaccion || !gestion) {
+        showNotification('Por favor, completa todos los campos correctamente.', 'error');
+        return;
+      }
+
+      const newGestionEntry = {
+        gestion,
+        timestamp: new Date().toISOString()
+      };
+
+      if (editIndex === -1) {
+        const cliente = {
+          nombre,
+          estado,
+          satisfaccion,
+          gestionHistory: [newGestionEntry],
+          timestamp: new Date().toISOString()
+        };
+        clientes.push(cliente);
+        showNotification('Cliente agregado correctamente', 'success');
+      } else {
+        clientes[editIndex] = {
+          ...clientes[editIndex],
+          nombre,
+          estado,
+          satisfaccion,
+          gestionHistory: [...clientes[editIndex].gestionHistory, newGestionEntry],
+          timestamp: new Date().toISOString()
+        };
+        showNotification('Cliente actualizado correctamente', 'success');
+        editIndex = -1;
+      }
+      localStorage.setItem('clientes', JSON.stringify(clientes));
+      renderTable();
+      form.reset();
+      validateInputs();
+    }
+
+    function exportToPDF() {
+      const doc = new jsPDF();
+      doc.setFont('Inter', 'normal');
+      doc.setFontSize(18);
+      doc.text('Reporte de Clientes - Innovasoft', 20, 20);
+      doc.setFontSize(12);
+      let y = 30;
+      clientes.forEach((cliente, index) => {
+        const latestGestion = cliente.gestionHistory.length > 0 ? cliente.gestionHistory[cliente.gestionHistory.length - 1].gestion : 'Sin gestión';
+        const lines = doc.splitTextToSize(
+          `${index + 1}. ${sanitizeInput(cliente.nombre)} - ${sanitizeInput(cliente.estado)} - ${sanitizeInput(cliente.satisfaccion)}\nGestión más reciente: ${sanitizeInput(latestGestion)}\nHistorial de Gestión:\n${cliente.gestionHistory.map(entry => `- [${new Date(entry.timestamp).toLocaleString('es-ES')}] ${sanitizeInput(entry.gestion)}`).join('\n')}`,
+          170
+        );
+        if (y + lines.length * 10 > 270) {
+          doc.addPage();
+          y = 20;
+        }
+        doc.text(lines, 20, y);
+        y += lines.length * 10 + 10;
+      });
+      doc.save('reporte_clientes.pdf');
+    }
+
+    function exportToCSV() {
+      let csv = 'Nombre,Estado,Satisfacción,Última Gestión,Timestamp,Historial de Gestión\n';
+      clientes.forEach(cliente => {
+        const latestGestion = cliente.gestionHistory.length > 0 ? cliente.gestionHistory[cliente.gestionHistory.length - 1].gestion : '';
+        const escapedGestion = latestGestion ? `"${latestGestion.replace(/"/g, '""')}"` : '""';
+        const escapedHistory = `"${cliente.gestionHistory.map(entry => `[${new Date(entry.timestamp).toLocaleString('es-ES')}] ${entry.gestion.replace(/"/g, '""')}`).join('; ')}"`;
+        csv += `${sanitizeInput(cliente.nombre)},${sanitizeInput(cliente.estado)},${sanitizeInput(cliente.satisfaccion)},${escapedGestion},${cliente.timestamp},${escapedHistory}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'reporte_clientes.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function exportToJSON() {
+      const blob = new Blob([JSON.stringify(clientes, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'backup_clientes.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function exportToExcel() {
+      const ws = XLSX.utils.json_to_sheet(clientes.map(cliente => ({
+        Nombre: cliente.nombre,
+        Estado: cliente.estado,
+        Satisfacción: cliente.satisfaccion,
+        'Última Gestión': cliente.gestionHistory.length > 0 ? cliente.gestionHistory[cliente.gestionHistory.length - 1].gestion : '',
+        Timestamp: cliente.timestamp,
+        'Historial de Gestión': cliente.gestionHistory.map(entry => `[${new Date(entry.timestamp).toLocaleString('es-ES')}] ${entry.gestion}`).join('; ')
+      })));
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Clientes');
+      XLSX.writeFile(wb, 'reporte_clientes.xlsx');
+    }
+
+    function importJSON(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const importedData = JSON.parse(event.target.result);
+            if (Array.isArray(importedData) && importedData.every(item =>
+              typeof item.nombre === 'string' &&
+              typeof item.estado === 'string' &&
+              typeof item.satisfaccion === 'string' &&
+              Array.isArray(item.gestionHistory) &&
+              item.gestionHistory.every(entry => typeof entry.gestion === 'string' && typeof entry.timestamp === 'string')
+            )) {
+              clientes = importedData;
+              localStorage.setItem('clientes', JSON.stringify(clientes));
+              renderTable();
+              showNotification('Datos importados correctamente', 'success');
+            } else {
+              showNotification('El archivo JSON no tiene el formato correcto', 'error');
+            }
+          } catch (error) {
+            showNotification('Error al importar el archivo JSON', 'error');
+          }
+        };
+        reader.readAsText(file);
+      }
+    }
+
+    function deleteAllClientes() {
+      if (confirm('¿Estás seguro de borrar todos los clientes? Esto no se puede deshacer.')) {
+        const blob = new Blob([JSON.stringify(clientes, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'backup_clientes_antes_borrado.json';
+        a.click();
+        URL.revokeObjectURL(url);
+
+        clientes = [];
+        localStorage.setItem('clientes', JSON.stringify(clientes));
+        renderTable();
+        showNotification('Todos los clientes han sido eliminados. Se descargó un respaldo.', 'success');
+      }
+    }
+
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    function editarCliente(index) {
+      const cliente = clientes[index];
+      document.getElementById('nombre').value = cliente.nombre;
+      document.getElementById('estado').value = cliente.estado;
+      document.getElementById('satisfaccion').value = cliente.satisfaccion;
+      document.getElementById('gestion').value = '';
+      editIndex = index;
+      validateInputs();
+    }
+
+    function eliminarCliente(index) {
+      if (confirm('¿Estás seguro de eliminar este cliente?')) {
+        clientes.splice(index, 1);
+        localStorage.setItem('clientes', JSON.stringify(clientes));
+        renderTable();
+        showNotification('Cliente eliminado correctamente', 'success');
+      }
+    }
+
+    // Event Listeners
+    form.addEventListener('submit', handleFormSubmit);
+    descargarPDF.addEventListener('click', exportToPDF);
+    descargarCSV.addEventListener('click', exportToCSV);
+    descargarJSON.addEventListener('click', exportToJSON);
+    descargarExcel.addEventListener('click', exportToExcel);
+    importarJSON.addEventListener('click', () => document.getElementById('importar-json').click());
+    document.getElementById('importar-json').addEventListener('change', importJSON);
+    borrarTodo.addEventListener('click', deleteAllClientes);
+    buscarCliente.addEventListener('input', debounce(() => {
+      const term = sanitizeInput(buscarCliente.value.toLowerCase());
+      const filtered = clientes.filter(c =>
+        c.nombre.toLowerCase().includes(term) ||
+        c.gestionHistory.some(entry => entry.gestion.toLowerCase().includes(term))
+      );
+      renderTable(filtered, 1);
+    }, 300));
+
+    document.querySelectorAll('#formulario input, #formulario select, #formulario textarea').forEach(input => {
+      input.addEventListener('input', validateInputs);
+    });
+
+    document.querySelectorAll('th[data-sort]').forEach(th => {
+      th.addEventListener('click', () => {
+        const column = th.dataset.sort;
+        if (sortColumn === column) {
+          sortDirection *= -1;
+        } else {
+          sortColumn = column;
+          sortDirection = 1;
+        }
+        const sorted = [...clientes].sort((a, b) => {
+          const valA = column === 'gestionHistory' ? (a.gestionHistory.length > 0 ? a.gestionHistory[a.gestionHistory.length - 1].gestion : '') : a[column] || a.timestamp || '';
+          const valB = column === 'gestionHistory' ? (b.gestionHistory.length > 0 ? b.gestionHistory[b.gestionHistory.length - 1].gestion : '') : b[column] || b.timestamp || '';
+          return valA.localeCompare(valB) * sortDirection;
+        });
+        renderTable(sorted, 1);
+      });
+    });
+
+    document.querySelector('.close-modal').addEventListener('click', closeModal);
+    gestionHistoryModal.addEventListener('click', (e) => {
+      if (e.target === gestionHistoryModal) closeModal();
+    });
+
+    // Initialization
+    validateInputs();
+    renderTable();
+  </script>
+</body>
+</html>
